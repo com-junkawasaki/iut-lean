@@ -138,6 +138,30 @@ theorem exists_hyperbolic_eulerChar {v : ℤ} (hv : v < 0) :
   · simp only [eulerChar]
     omega
 
+/-- **Dimension of the moduli space** `M_{g,n}` of the numerical type `(g, n)`:
+`dim M_{g,n} = 3g - 3 + n`. This is the other standard invariant of a curve type (alongside
+`eulerChar`) used throughout Teichmüller theory, Grothendieck–Teichmüller theory, and Mochizuki's
+IUT papers. -/
+def moduliDim (t : CurveType) : ℤ := 3 * (t.genus : ℤ) - 3 + t.punctures
+
+/-- **Every hyperbolic curve type has non-negative moduli dimension.** This is the basic fact
+underlying why hyperbolic curves form a sensible geometric moduli problem: their parameter space
+is never "negative-dimensional". -/
+theorem moduliDim_nonneg_of_isHyperbolic {t : CurveType} (h : IsHyperbolic t) :
+    0 ≤ moduliDim t := by
+  simp only [IsHyperbolic] at h
+  simp only [moduliDim]
+  omega
+
+/-- **The unique rigid hyperbolic curve type** (zero moduli dimension) is `(g, n) = (0, 3)`,
+the thrice-punctured sphere — the classical base case of Grothendieck–Teichmüller theory, whose
+moduli space `M_{0,3}` is a single point. -/
+theorem moduliDim_eq_zero_iff_of_isHyperbolic {t : CurveType} (h : IsHyperbolic t) :
+    moduliDim t = 0 ↔ t = ⟨0, 3⟩ := by
+  obtain ⟨g, n⟩ := t
+  simp only [IsHyperbolic, moduliDim, CurveType.mk.injEq] at h ⊢
+  omega
+
 end CurveType
 
 end Anabelian
