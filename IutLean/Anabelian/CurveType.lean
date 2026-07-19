@@ -70,6 +70,33 @@ theorem IsHyperbolic.add_genus {t : CurveType} (h : IsHyperbolic t) :
     IsHyperbolic ⟨t.genus + 1, t.punctures⟩ := by
   simp only [IsHyperbolic] at h ⊢; omega
 
+/-- **Euler characteristic** of the numerical type `(g, n)`: `χ = 2 - 2g - n`. This is the Euler
+characteristic of the underlying compact Riemann surface (genus `g`) with `n` points removed,
+and is the standard bookkeeping quantity used throughout the anabelian geometry literature
+(including Mochizuki's papers, which routinely refer to a curve "of type `(g, r)`" via this
+Euler characteristic). -/
+def eulerChar (t : CurveType) : ℤ := 2 - 2 * (t.genus : ℤ) - (t.punctures : ℤ)
+
+/-- **Standard reformulation of hyperbolicity via the Euler characteristic**: a curve type is
+hyperbolic iff its Euler characteristic is negative. This is the form in which hyperbolicity is
+usually stated in the literature (`2g - 2 + n > 0 ↔ χ < 0`); `IsHyperbolic` above is the
+`ℕ`-subtraction-free definition used for computation, and this lemma certifies the two agree. -/
+theorem isHyperbolic_iff_eulerChar_neg (t : CurveType) :
+    IsHyperbolic t ↔ eulerChar t < 0 := by
+  simp only [IsHyperbolic, eulerChar]
+  omega
+
+/-- The Euler characteristic is additive in punctures: removing one more point drops `χ` by
+exactly `1`. -/
+theorem eulerChar_add_puncture (t : CurveType) :
+    eulerChar ⟨t.genus, t.punctures + 1⟩ = eulerChar t - 1 := by
+  simp only [eulerChar]; push_cast; omega
+
+/-- The Euler characteristic drops by `2` for each unit of genus. -/
+theorem eulerChar_add_genus (t : CurveType) :
+    eulerChar ⟨t.genus + 1, t.punctures⟩ = eulerChar t - 2 := by
+  simp only [eulerChar]; push_cast; omega
+
 end CurveType
 
 end Anabelian
