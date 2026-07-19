@@ -49,6 +49,23 @@ theorem not_isHyperbolic_iff (t : CurveType) :
   simp only [IsHyperbolic, CurveType.mk.injEq]
   omega
 
+/-- **Computable witness for `not_isHyperbolic_iff`.** The same four excluded types, packaged
+as an explicit `Finset` (rather than a disjunction of propositional equalities) so that
+membership, cardinality, and other properties of the non-hyperbolic exception set can be
+checked by `decide` / `native_decide` instead of only reasoned about propositionally. -/
+def nonHyperbolicTypes : Finset CurveType := {⟨0, 0⟩, ⟨0, 1⟩, ⟨0, 2⟩, ⟨1, 0⟩}
+
+/-- The `nonHyperbolicTypes` Finset really does compute the non-hyperbolic types: its
+coercion to a `Set` is exactly `{t | ¬ IsHyperbolic t}`. -/
+theorem coe_nonHyperbolicTypes :
+    (↑nonHyperbolicTypes : Set CurveType) = {t | ¬ IsHyperbolic t} := by
+  ext t
+  simp only [nonHyperbolicTypes, Finset.coe_insert, Finset.coe_singleton, Set.mem_insert_iff,
+    Set.mem_singleton_iff, Set.mem_ofPred_eq, not_isHyperbolic_iff]
+
+/-- There are exactly four non-hyperbolic curve types, verified by direct computation. -/
+theorem card_nonHyperbolicTypes : nonHyperbolicTypes.card = 4 := by decide
+
 /-- Any curve of genus at least `2` is hyperbolic, regardless of the number of punctures. -/
 theorem isHyperbolic_of_two_le_genus {t : CurveType} (h : 2 ≤ t.genus) : IsHyperbolic t := by
   simp only [IsHyperbolic]; omega
