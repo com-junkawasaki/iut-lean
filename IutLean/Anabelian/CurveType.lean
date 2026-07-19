@@ -165,6 +165,17 @@ theorem moduliDim_eq_zero_iff_of_isHyperbolic {t : CurveType} (h : IsHyperbolic 
   simp only [IsHyperbolic, moduliDim, CurveType.mk.injEq] at h ⊢
   omega
 
+/-- **The two moduli-dimension-`1` hyperbolic types** are exactly `(g, n) = (0, 4)` (the
+four-punctured sphere) and `(1, 1)` (the once-punctured elliptic curve, i.e. the classical
+modular curve type). Alongside `(0, 3)`, these are precisely the fundamental building blocks
+whose Teichmüller/moduli theory underlies the Grothendieck–Teichmüller group's defining
+compatibility conditions. -/
+theorem moduliDim_eq_one_iff_of_isHyperbolic {t : CurveType} (h : IsHyperbolic t) :
+    moduliDim t = 1 ↔ t = ⟨0, 4⟩ ∨ t = ⟨1, 1⟩ := by
+  obtain ⟨g, n⟩ := t
+  simp only [IsHyperbolic, moduliDim, CurveType.mk.injEq] at h ⊢
+  omega
+
 /-- **Bounded moduli dimension bounds both genus and puncture count.** This holds for every
 curve type, not just hyperbolic ones: it is the numerical input to the classical finiteness
 fact that only finitely many types have moduli dimension below a given bound (the actual
