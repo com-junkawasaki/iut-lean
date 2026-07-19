@@ -123,6 +123,21 @@ theorem IsUnramifiedCoverType.isHyperbolic_iff {d : ℕ} {X Y : CurveType}
     omega
   · exact mul_neg_of_pos_of_neg hd'
 
+/-- **Every negative integer is realized as the Euler characteristic of a hyperbolic curve
+type.** In fact a genus-`0` curve always suffices: `eulerChar ⟨0, n⟩ = 2 - n`, so choosing
+`n = 2 - v` realizes any target `v < 0`. This shows the numerical invariant `eulerChar`
+surjects onto the negative integers already restricted to hyperbolic types — the classification
+`not_isHyperbolic_iff` above shows the non-hyperbolic types are a sparse, finite exception, while
+this shows the hyperbolic side is numerically as rich as it could possibly be. -/
+theorem exists_hyperbolic_eulerChar {v : ℤ} (hv : v < 0) :
+    ∃ t : CurveType, IsHyperbolic t ∧ eulerChar t = v := by
+  have hn : ((2 - v).toNat : ℤ) = 2 - v := Int.toNat_of_nonneg (by omega)
+  refine ⟨⟨0, (2 - v).toNat⟩, ?_, ?_⟩
+  · rw [isHyperbolic_genus_zero_iff]
+    omega
+  · simp only [eulerChar]
+    omega
+
 end CurveType
 
 end Anabelian
