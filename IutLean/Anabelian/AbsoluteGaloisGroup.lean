@@ -74,3 +74,16 @@ theorem Field.absoluteGaloisGroup_real_mulEquiv :
   have h1 : Nat.card (Multiplicative (ZMod 2)) = 2 := by
     simp [Nat.card_eq_fintype_card]
   exact ⟨mulEquivOfPrimeCardEq h1 absoluteGaloisGroup_real_card⟩
+
+/-- **A sanity-check corollary tying the file together**: `ℝ` is not algebraically closed. Of
+course this is elementary on its own (e.g. `X² + 1` has no real root), but it also follows for
+free by combining the two previous theorems: if `ℝ` were algebraically closed,
+`absoluteGaloisGroup_subsingleton_of_isAlgClosed` would force `Nat.card (absoluteGaloisGroup ℝ)`
+to be at most `1`, contradicting `absoluteGaloisGroup_real_card` (`= 2`). -/
+theorem Field.not_isAlgClosed_real : ¬ IsAlgClosed ℝ := by
+  intro h
+  haveI hsub := absoluteGaloisGroup_subsingleton_of_isAlgClosed (K := ℝ)
+  have hle : Nat.card (Field.absoluteGaloisGroup ℝ) ≤ 1 :=
+    Finite.card_le_one_iff_subsingleton.mpr hsub
+  rw [absoluteGaloisGroup_real_card] at hle
+  omega
