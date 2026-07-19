@@ -234,6 +234,25 @@ theorem IsNonSeparatingSplit.eulerChar_eq {t t' : CurveType} (h : IsNonSeparatin
   simp only [eulerChar] at *
   omega
 
+/-- **Boundary divisors of `M̄_{g,n}` have codimension exactly `1`.** Under a separating nodal
+degeneration, the moduli dimensions of the two components add up to exactly one less than the
+dimension of the original type: `dim(t₁) + dim(t₂) = dim(t) - 1`. This is the standard fact
+that the boundary of the Deligne–Mumford compactification is a codimension-`1` divisor, now
+recorded numerically alongside the Euler characteristic identity above. -/
+theorem IsSeparatingSplit.moduliDim_eq {t t₁ t₂ : CurveType} (h : IsSeparatingSplit t t₁ t₂) :
+    moduliDim t₁ + moduliDim t₂ = moduliDim t - 1 := by
+  obtain ⟨hg, hn⟩ := h
+  simp only [moduliDim] at *
+  omega
+
+/-- See `IsSeparatingSplit.moduliDim_eq`: the non-separating analogue. A non-separating nodal
+degeneration also drops the moduli dimension by exactly `1`. -/
+theorem IsNonSeparatingSplit.moduliDim_eq {t t' : CurveType} (h : IsNonSeparatingSplit t t') :
+    moduliDim t' = moduliDim t - 1 := by
+  obtain ⟨hg, hn⟩ := h
+  simp only [moduliDim] at *
+  omega
+
 end CurveType
 
 end Anabelian
