@@ -97,6 +97,32 @@ theorem eulerChar_add_genus (t : CurveType) :
     eulerChar ⟨t.genus + 1, t.punctures⟩ = eulerChar t - 2 := by
   simp only [eulerChar]; push_cast; omega
 
+/-- **Numerical degree formula for unramified covers.** If `X` is (the numerical type of) a
+degree-`d` *unramified* cover of `Y` — i.e. `χ(X) = d · χ(Y)`, the unramified case of the
+Riemann–Hurwitz formula (no ramification correction term) — then `X` is hyperbolic iff `Y` is.
+This is the basic fact that lets anabelian geometry restrict attention to hyperbolic curves
+consistently when passing to finite (unramified) covers: since `d > 0`, `χ(X)` and `χ(Y)` have
+the same sign, so `IsHyperbolic X ↔ eulerChar X < 0 ↔ eulerChar Y < 0 ↔ IsHyperbolic Y`.
+
+This is purely the numerical/combinatorial shadow of the degree formula on Euler
+characteristics — it does not (yet) model actual covering maps of curves or their ramification
+data; see the module docstring for how this fits the project's roadmap. -/
+def IsUnramifiedCoverType (d : ℕ) (X Y : CurveType) : Prop :=
+  0 < d ∧ eulerChar X = (d : ℤ) * eulerChar Y
+
+theorem IsUnramifiedCoverType.isHyperbolic_iff {d : ℕ} {X Y : CurveType}
+    (h : IsUnramifiedCoverType d X Y) : IsHyperbolic X ↔ IsHyperbolic Y := by
+  obtain ⟨hd, heq⟩ := h
+  have hd' : (0 : ℤ) < (d : ℤ) := by exact_mod_cast hd
+  rw [isHyperbolic_iff_eulerChar_neg, isHyperbolic_iff_eulerChar_neg, heq]
+  constructor
+  · intro h
+    by_contra hy
+    push Not at hy
+    have : (0 : ℤ) ≤ (d : ℤ) * eulerChar Y := mul_nonneg hd'.le hy
+    omega
+  · exact mul_neg_of_pos_of_neg hd'
+
 end CurveType
 
 end Anabelian
