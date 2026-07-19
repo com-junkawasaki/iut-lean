@@ -196,6 +196,44 @@ theorem finite_hyperbolic_of_moduliDim_le (N : ℤ) :
   have hp := punctures_le_of_moduliDim_le hmod
   omega
 
+/-! ## Nodal degeneration and the boundary of `M̄_{g,n}`
+
+The Deligne–Mumford compactification `M̄_{g,n}` of the moduli space of curves adjoins *stable
+nodal curves* at its boundary. Every boundary divisor arises from one of two combinatorial
+degenerations of the numerical type `(g, n)`: a curve splitting into two components joined at a
+node (a *separating* node), or a single component acquiring a *non-separating* self-node. Both
+operations are numerically well known to preserve the Euler characteristic exactly; the two
+theorems below record this. -/
+
+/-- **Separating nodal degeneration.** `t` degenerates into two components `t₁`, `t₂` glued along
+a single separating node: genus is additive (`g = g₁ + g₂`), and each side of the node
+contributes one new marked point, so `n₁ + n₂ = n + 2`. -/
+def IsSeparatingSplit (t t₁ t₂ : CurveType) : Prop :=
+  t.genus = t₁.genus + t₂.genus ∧ t₁.punctures + t₂.punctures = t.punctures + 2
+
+/-- The Euler characteristic is additive under a separating nodal degeneration:
+`χ(t) = χ(t₁) + χ(t₂)`. -/
+theorem IsSeparatingSplit.eulerChar_eq {t t₁ t₂ : CurveType} (h : IsSeparatingSplit t t₁ t₂) :
+    eulerChar t = eulerChar t₁ + eulerChar t₂ := by
+  obtain ⟨hg, hn⟩ := h
+  simp only [eulerChar] at *
+  omega
+
+/-- **Non-separating nodal degeneration.** `t` degenerates by acquiring a single self-node
+(gluing two points of one irreducible component together): the genus drops by one
+(`g = g' + 1`) while the node's two branches each contribute one new marked point on the
+normalization, so `n' = n + 2`. -/
+def IsNonSeparatingSplit (t t' : CurveType) : Prop :=
+  t.genus = t'.genus + 1 ∧ t'.punctures = t.punctures + 2
+
+/-- The Euler characteristic is also preserved (exactly, not just additively split) under a
+non-separating nodal degeneration: `χ(t) = χ(t')`. -/
+theorem IsNonSeparatingSplit.eulerChar_eq {t t' : CurveType} (h : IsNonSeparatingSplit t t') :
+    eulerChar t = eulerChar t' := by
+  obtain ⟨hg, hn⟩ := h
+  simp only [eulerChar] at *
+  omega
+
 end CurveType
 
 end Anabelian
