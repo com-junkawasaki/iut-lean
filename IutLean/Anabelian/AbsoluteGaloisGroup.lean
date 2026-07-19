@@ -34,3 +34,13 @@ theorem Field.absoluteGaloisGroup_subsingleton_of_isAlgClosed
     {K : Type*} [Field K] [IsAlgClosed K] : Subsingleton (Field.absoluteGaloisGroup K) := by
   have e : AlgebraicClosure K ≃ₐ[K] K := IsAlgClosure.equiv K (AlgebraicClosure K) K
   exact (AlgEquiv.autCongr e).toEquiv.subsingleton_congr.mpr inferInstance
+
+/-- **Usable upgrade of the previous theorem to a `Unique` instance.** `absoluteGaloisGroup K`
+is not just subsingleton but has an explicit inhabitant (the identity automorphism, `1` in its
+`Group` structure), giving `Unique (absoluteGaloisGroup K)` — the form actually convenient for
+downstream use (e.g. `default`/`Unique.eq_default` rather than needing to invoke
+`Subsingleton.elim` against an arbitrary witness each time). -/
+noncomputable instance Field.absoluteGaloisGroup.instUnique_of_isAlgClosed
+    {K : Type*} [Field K] [IsAlgClosed K] : Unique (Field.absoluteGaloisGroup K) :=
+  haveI := absoluteGaloisGroup_subsingleton_of_isAlgClosed (K := K)
+  uniqueOfSubsingleton 1
