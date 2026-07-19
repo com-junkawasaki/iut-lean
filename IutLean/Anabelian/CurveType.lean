@@ -1,4 +1,7 @@
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Data.Set.Finite.Basic
+import Mathlib.Data.Finset.Prod
+import Mathlib.Data.Finset.Image
 
 /-!
 # Hyperbolicity type of a curve
@@ -174,6 +177,24 @@ theorem genus_le_of_moduliDim_le {t : CurveType} {N : ℤ} (hN : moduliDim t ≤
 theorem punctures_le_of_moduliDim_le {t : CurveType} {N : ℤ} (hN : moduliDim t ≤ N) :
     (t.punctures : ℤ) ≤ N + 3 := by
   simp only [moduliDim] at hN; omega
+
+/-- **Finiteness of hyperbolic types with bounded moduli dimension.** Only finitely many
+hyperbolic curve types have moduli dimension at most `N`, for any bound `N` — the classical
+finiteness fact anticipated by `genus_le_of_moduliDim_le` / `punctures_le_of_moduliDim_le`,
+made precise as an explicit `Set.Finite` witnessed by an actual bounding `Finset`. -/
+theorem finite_hyperbolic_of_moduliDim_le (N : ℤ) :
+    {t : CurveType | IsHyperbolic t ∧ moduliDim t ≤ N}.Finite := by
+  set n := (N + 3).toNat with hn
+  apply Set.Finite.subset (Finset.finite_toSet
+    ((Finset.range (n + 1) ×ˢ Finset.range (n + 1)).image
+      (fun p : ℕ × ℕ => (⟨p.1, p.2⟩ : CurveType))))
+  rintro t ⟨-, hmod⟩
+  rw [Finset.mem_coe, Finset.mem_image]
+  refine ⟨(t.genus, t.punctures), ?_, rfl⟩
+  rw [Finset.mem_product, Finset.mem_range, Finset.mem_range]
+  have hg := genus_le_of_moduliDim_le hmod
+  have hp := punctures_le_of_moduliDim_le hmod
+  omega
 
 end CurveType
 
