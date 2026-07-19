@@ -62,3 +62,15 @@ theorem Field.absoluteGaloisGroup_real_card :
   have heq : Nat.card (Field.absoluteGaloisGroup ℝ) = Nat.card (ℂ ≃ₐ[ℝ] ℂ) :=
     Nat.card_congr (AlgEquiv.autCongr e).toEquiv
   rw [heq, IsGalois.card_aut_eq_finrank, Complex.finrank_real_complex]
+
+/-- **`Gal(ℂ/ℝ)` as an actual group, not just a cardinality fact**: `absoluteGaloisGroup ℝ` is
+isomorphic to `Multiplicative (ZMod 2)`, i.e. it really is (a copy of) `ℤ/2`. Any two groups of
+the same prime order are isomorphic (`mulEquivOfPrimeCardEq`, via both being cyclic of that
+order), so this follows immediately from `absoluteGaloisGroup_real_card` together with the
+(trivial) fact that `Multiplicative (ZMod 2)` itself has cardinality `2`. -/
+theorem Field.absoluteGaloisGroup_real_mulEquiv :
+    Nonempty (Multiplicative (ZMod 2) ≃* Field.absoluteGaloisGroup ℝ) := by
+  haveI : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
+  have h1 : Nat.card (Multiplicative (ZMod 2)) = 2 := by
+    simp [Nat.card_eq_fintype_card]
+  exact ⟨mulEquivOfPrimeCardEq h1 absoluteGaloisGroup_real_card⟩
