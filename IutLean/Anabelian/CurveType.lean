@@ -162,6 +162,19 @@ theorem moduliDim_eq_zero_iff_of_isHyperbolic {t : CurveType} (h : IsHyperbolic 
   simp only [IsHyperbolic, moduliDim, CurveType.mk.injEq] at h ⊢
   omega
 
+/-- **Bounded moduli dimension bounds both genus and puncture count.** This holds for every
+curve type, not just hyperbolic ones: it is the numerical input to the classical finiteness
+fact that only finitely many types have moduli dimension below a given bound (the actual
+`Set.Finite` statement is left for a future step). -/
+theorem genus_le_of_moduliDim_le {t : CurveType} {N : ℤ} (hN : moduliDim t ≤ N) :
+    (t.genus : ℤ) ≤ N + 3 := by
+  simp only [moduliDim] at hN; omega
+
+/-- See `genus_le_of_moduliDim_le`: the puncture-count analogue. -/
+theorem punctures_le_of_moduliDim_le {t : CurveType} {N : ℤ} (hN : moduliDim t ≤ N) :
+    (t.punctures : ℤ) ≤ N + 3 := by
+  simp only [moduliDim] at hN; omega
+
 end CurveType
 
 end Anabelian
