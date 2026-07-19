@@ -164,6 +164,16 @@ theorem exists_hyperbolic_eulerChar {v : ℤ} (hv : v < 0) :
 IUT papers. -/
 def moduliDim (t : CurveType) : ℤ := 3 * (t.genus : ℤ) - 3 + t.punctures
 
+/-- **The two standard invariants determine each other (given the genus).** `moduliDim` and
+`eulerChar` are related by `dim = g - 1 - χ`, so knowing the genus lets either invariant be
+recovered from the other. This is the identity implicit whenever both invariants are used
+together in the literature; it is recorded explicitly here since neither `eulerChar` nor
+`moduliDim` was defined in terms of the other. -/
+theorem moduliDim_eq_genus_sub_one_sub_eulerChar (t : CurveType) :
+    moduliDim t = (t.genus : ℤ) - 1 - eulerChar t := by
+  simp only [moduliDim, eulerChar]
+  omega
+
 /-- **Every hyperbolic curve type has non-negative moduli dimension.** This is the basic fact
 underlying why hyperbolic curves form a sensible geometric moduli problem: their parameter space
 is never "negative-dimensional". -/
