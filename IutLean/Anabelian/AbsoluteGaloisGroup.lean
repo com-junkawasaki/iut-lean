@@ -1,5 +1,8 @@
 import Mathlib.FieldTheory.AbsoluteGaloisGroup
 import Mathlib.FieldTheory.IsAlgClosed.Basic
+import Mathlib.FieldTheory.Galois.Basic
+import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 
 /-!
 # The absolute Galois group and the anabelian program
@@ -44,3 +47,18 @@ noncomputable instance Field.absoluteGaloisGroup.instUnique_of_isAlgClosed
     {K : Type*} [Field K] [IsAlgClosed K] : Unique (Field.absoluteGaloisGroup K) :=
   haveI := absoluteGaloisGroup_subsingleton_of_isAlgClosed (K := K)
   uniqueOfSubsingleton 1
+
+/-- **The absolute Galois group of `ℝ` has exactly two elements** — the archetypal nontrivial
+example of a Galois group in all of mathematics, `Gal(ℂ/ℝ) ≅ ℤ/2` (identity and complex
+conjugation). `ℂ` is `ℝ`'s algebraic closure (`Complex.isAlgClosed` is the Fundamental Theorem
+of Algebra, and `ℂ` is algebraic — indeed finite — over `ℝ`), so `absoluteGaloisGroup ℝ`
+transports along `IsAlgClosure.equiv`/`AlgEquiv.autCongr` to `ℂ ≃ₐ[ℝ] ℂ`, whose cardinality is
+computed by the general Galois-theory fact `IsGalois.card_aut_eq_finrank` together with
+`Complex.finrank_real_complex : Module.finrank ℝ ℂ = 2`. -/
+theorem Field.absoluteGaloisGroup_real_card :
+    Nat.card (Field.absoluteGaloisGroup ℝ) = 2 := by
+  haveI : IsAlgClosure ℝ ℂ := ⟨Complex.isAlgClosed, inferInstance⟩
+  have e : AlgebraicClosure ℝ ≃ₐ[ℝ] ℂ := IsAlgClosure.equiv ℝ (AlgebraicClosure ℝ) ℂ
+  have heq : Nat.card (Field.absoluteGaloisGroup ℝ) = Nat.card (ℂ ≃ₐ[ℝ] ℂ) :=
+    Nat.card_congr (AlgEquiv.autCongr e).toEquiv
+  rw [heq, IsGalois.card_aut_eq_finrank, Complex.finrank_real_complex]
