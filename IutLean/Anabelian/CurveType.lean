@@ -1,4 +1,5 @@
 import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Linarith
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Data.Finset.Prod
 import Mathlib.Data.Finset.Image
@@ -290,6 +291,41 @@ theorem IsNonSeparatingSplit.moduliDim_eq {t t' : CurveType} (h : IsNonSeparatin
   obtain ⟨hg, hn⟩ := h
   simp only [moduliDim] at *
   omega
+
+/-! ## General (possibly ramified) covers
+
+`IsUnramifiedCoverType` above is the `R = 0` special case of the full Riemann–Hurwitz formula
+`χ(X) = d·χ(Y) - R`, where `R = Σₓ (eₓ - 1) ≥ 0` is the total ramification (sum over ramification
+points of the cover, of one less than the ramification index at that point — `0` exactly at
+unramified points). This section records the numerical shadow of the general formula, without
+modeling the ramification points/indices individually (just their total contribution `R`), and
+proves the theorem this generalization is really for: **any cover of a hyperbolic curve,
+ramified or not, is again hyperbolic.** -/
+
+/-- **Numerical Riemann–Hurwitz formula**, ramification included: `X` is (the numerical type of)
+a degree-`d` cover of `Y` with total ramification `R ≥ 0`. Specializes to
+`IsUnramifiedCoverType` at `R = 0`. -/
+def IsCoverType (d R : ℕ) (X Y : CurveType) : Prop :=
+  0 < d ∧ eulerChar X = (d : ℤ) * eulerChar Y - R
+
+theorem isUnramifiedCoverType_iff_isCoverType_zero {d : ℕ} {X Y : CurveType} :
+    IsUnramifiedCoverType d X Y ↔ IsCoverType d 0 X Y := by
+  simp [IsUnramifiedCoverType, IsCoverType]
+
+/-- **Any cover of a hyperbolic curve is hyperbolic, ramified or not.** Unlike
+`IsUnramifiedCoverType.isHyperbolic_iff`, this is only one implication (the converse genuinely
+fails once ramification is allowed: a ramified cover of a non-hyperbolic base, e.g. a
+hyperelliptic curve of genus `≥ 2` branched over `(0, 0)` — the sphere `ℙ¹` — can certainly be
+hyperbolic), but it holds for *any* amount of ramification `R ≥ 0`. This is one of the most
+basic facts making the theory of hyperbolic curves well-posed: passing to a finite cover, with
+arbitrary ramification, never leaves the hyperbolic world. -/
+theorem IsCoverType.isHyperbolic_of_base {d R : ℕ} {X Y : CurveType}
+    (h : IsCoverType d R X Y) (hY : IsHyperbolic Y) : IsHyperbolic X := by
+  obtain ⟨hd, heq⟩ := h
+  rw [isHyperbolic_iff_eulerChar_neg] at hY ⊢
+  have hd' : (1 : ℤ) ≤ d := by exact_mod_cast hd
+  have hR : (0 : ℤ) ≤ R := Int.natCast_nonneg R
+  nlinarith [heq, hY, hd', hR]
 
 end CurveType
 
