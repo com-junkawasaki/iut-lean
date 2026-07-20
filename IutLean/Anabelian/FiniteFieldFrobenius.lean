@@ -110,3 +110,20 @@ theorem frobAlgEquiv_infinite_order : ¬ IsOfFinOrder (frobAlgEquiv p) := by
   rw [isOfFinOrder_iff_pow_eq_one]
   push Not
   exact fun n hn => frobAlgEquiv_pow_ne_one p hn
+
+/-- **`Field.absoluteGaloisGroup (ZMod p)` is infinite** — the goal this whole file works
+toward, packaged as a usable `Infinite` instance rather than left only as the `IsOfFinOrder`
+fact above. In a finite group every element has finite order
+(`isOfFinOrder_of_finite`); `frobAlgEquiv p` doesn't, so the group can't be finite.
+
+The `show` at the start of the proof is load-bearing: `Field.absoluteGaloisGroup K` is a plain
+`def` (not `abbrev`) for `AlgebraicClosure K ≃ₐ[K] AlgebraicClosure K`, so typeclass search does
+not automatically see through it to match a `Finite`/`Infinite` instance stated in terms of the
+unfolded type (which is what `frobAlgEquiv p`'s stated type is, and what `isOfFinOrder_of_finite`
+needs) — `show` bridges the two defeq-but-not-syntactically-equal expressions. -/
+instance absoluteGaloisGroup_zmod_infinite : Infinite (Field.absoluteGaloisGroup (ZMod p)) := by
+  show Infinite (AlgebraicClosure (ZMod p) ≃ₐ[ZMod p] AlgebraicClosure (ZMod p))
+  by_contra hninf
+  haveI hfin : Finite (AlgebraicClosure (ZMod p) ≃ₐ[ZMod p] AlgebraicClosure (ZMod p)) :=
+    not_infinite_iff_finite.mp hninf
+  exact frobAlgEquiv_infinite_order p (isOfFinOrder_of_finite (frobAlgEquiv p))
